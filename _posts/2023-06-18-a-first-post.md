@@ -1,3 +1,8 @@
+---
+layout: post
+title: A First Post
+---
+
 ## A First Post
 
 ```typescript

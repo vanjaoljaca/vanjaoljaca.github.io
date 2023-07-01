@@ -49,6 +49,12 @@ collections:
   miniprojects:
     output: true
     permalink: /:collection/:title.html
+  guides:
+    output: true
+    permalink: /:collection/:title.html
+  more:
+    output: true
+    permalink: /:collection/:title.html
 
 # Exclude from processing.
 # The following items will not be processed, by default.

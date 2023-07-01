@@ -7,4 +7,5 @@ layout: default
 
 # Welcome
 
-This is my home page
+- Main twitter account: [@vanjaoljaca](https://twitter.com/vanjaoljaca)
+- Off-topic twitter: [@vanjajaja1](https://twitter.com/vanjajaja1)
