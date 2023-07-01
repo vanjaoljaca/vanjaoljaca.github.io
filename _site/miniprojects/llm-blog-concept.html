@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>LLM Blog Concept</title>
+  <meta name="description" content="LLM Blog Concept">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="http://localhost:4000/miniprojects/llm-blog-concept.html">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="Vanja Oljaca" href="http://localhost:4000/feed.xml">
+
+  
+
+  
+  <meta property="og:title" content="LLM Blog Concept">
+  <meta property="og:site_name" content="Vanja Oljaca">
+  <meta property="og:url" content="http://localhost:4000/miniprojects/llm-blog-concept.html">
+  <meta property="og:description" content="LLM Blog Concept">
+  
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="vanjaoljaca">
+  <meta name="twitter:title" content="LLM Blog Concept">
+  <meta name="twitter:description" content="LLM Blog Concept">
+  
+    <meta name="twitter:creator" content="vanjaoljaca">
+  
+  
+
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
+
+  
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Vanja Oljaca</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">About</a>
+      
+        
+        <a class="page-link" href="/posts/">Posts</a>
+      
+        
+        <a class="page-link" href="/articles/">Articles</a>
+      
+        
+        <a class="page-link" href="/miniprojects/">Mini Projects</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">LLM Blog Concept</h1>
+  </header>
+
+  <div class="post-content">
+    <h3 id="llm-blog-concept">LLM Blog Concept</h3>
+
+<p><em>Tuesday, Jun 27 2022</em></p>
+
+<p>The idea behind this is that a blog post should be no more than 1 page (including picture, summary, insights, share links etc) and that any deeper info should be on a “need to know / pull” basis. ie, the details are there, but to get the user has to ask an LLM. The LLM would look into the backend to answer the question.</p>
+
+<p>Thought 1: How am I going to host this concept? I don’t have a web/blog yet and I only have a lambda, but lambdas are slow to start up and transferring blog content to them would be annoying.</p>
+
+<p>Thought 1b: who cares, just proof of concept it then figure out how to make it perform</p>
+
+<p>Thought 2: Asking questions is what gets people talking and involved with the thing, how can I use this tool to make things MORE social, not less social? ie. use it to lower the barrier of entry for social engagement, instead of making it a way to reject social involvement faster.</p>
+
+<ul>
+  <li>Summarise &amp; suggest top asked questions</li>
+  <li>Allow people to sign the guest book in some way directly via LLM (plug in)</li>
+</ul>
+
+<h4 id="implementation">Implementation</h4>
+
+<p>I already have my vanjacloud lambda from earlier, and an empty web site. First I’m going to get my website talking directly with the lambda, then I’m going to make sure my lambda-&gt;chatgpt connection still works.</p>
+
+<p>&lt;me: a nice thing about this is that I can use this a stream of consciousness while building, which I think will help with motivation and focus. BRB making coffee&gt;</p>
+
+<p>Thought 3: I wonder if I can use an LLM to generate the main page from this log? Probably just as a guide, but I think i’ll want to manually fine tune the main page for my aesthetic.</p>
+
+<p>First I built a test button to prove the integration. It’s important to do baby steps and especially at the bundaries. Prove the integration, then get the features. I got hit with the standard Access Control Origin issue, which I solved with chat GPT.</p>
+
+<p>Hit a snag because I have two URLs (still havent decided on my branding strategy) and I have a prod/dev function set up: I’m trying to use the dev function but I think its old. I tried to ‘swap’ prod and dev in azure portal… but that just broke both. Previously only dev was broken. Faffin’ about now trying to figure out if its something to do with my potentially old node version, Azure Function runtime is failing to start.</p>
+
+<p>Tried to deploy -dev slot with VSCode, failed. Fk it, I don’t need to use a dev slot today. Straigh to prod.</p>
+
+<p>Ok can’t go to prod, the openai typescript library uses imports with a tilde.. I guess this is new javascript syntax and my typescript isn’t supporting it. Quick google shows nothing interesting, usual insane suggestions of modying tsc module configuration to try appease one package. Seems it runs and can find the files so my plan is to either update tsc, disable tsc fail on errors (hate this) or just remove openai until I get my integration done right.</p>
+
+<p>What the actual fuck are these tilde imports, google barely knows about them and I see no direct connection to typescript only webpack/parcel which I don’t use.</p>
+
+<p>I tried to create a new typescript yarn project to see if openai works out of the box. I also tried to just upgrade typescript (mine was old 4.0 -&gt; 4.9.x). No luck. I started filing a bug and in the process I tried to create a repro case. At first I had a repro, then after some organizing to file the bug it now works in my repro case? I tried to update my typescript and openai versions in my main project and still no luck. I tried to use the repro case’s typescript config and no fix… I’m stumped. I think I’ll go back to finishing my integration before I make this work.</p>
+
+<p>I also forgot to mention I tried the classic rm -rf node_modules trick. Did not help. When I yarn remove’d openai, it still failed for the same openai error? Bizzare. I hate that this is broken because I hate python and I want node not to have stupid env errors like python so I can make fun of python-cels.</p>
+
+<p>Ok ran my test curl and it now works on the prod endpoint. Time to back up the work-stack and remember wtf I was trying to do: make a website that calls this API.</p>
+
+<p>yus it works:</p>
+
+<p><img src="./assets/image-20230627224043978.png" alt="image-20230627224043978" /></p>
+
+<p>Also, daily I think to myself: man I love chat GPT. I always knew about cmd+shift+4, now I learned I can press ‘space’</p>
+
+<p><img src="./assets/image-20230627224146554.png" alt="image-20230627224146554" /></p>
+
+<p>(Also, I forgot, before all this started I prototyped the concept using playground.openai.com &amp; my old blog post. I had to make sure it would be reasonable and it was…)</p>
+
+<p><img src="assets/llm-blog-concept/image-20230627224729342.png" alt="image-20230627224729342" /></p>
+
+<p>Anyway, now to get it to sent a message + print the response + upload to web…</p>
+
+<p>Thought 4: I’m not sure ChatGPT makes my coding faster, but it sure makes it more fun. I prompted:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>I want react html for a chat interface, very simple. I need to be able to send a message (text box, button, send on enter) and it needs to call a method i will write which is sendMessage(message), then sendMessage will take care of async getting a response from server and both message and response need to make it into some sort of chat box. very simple, do code
+</code></pre></div></div>
+
+<p>response was bigger than I expected / wanted, pretty sure I could have done this in like 5 lines to start but lets try it out before I knock it</p>
+
+<div class="language-react highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span><span class="p">,</span> <span class="p">{</span> <span class="nx">useState</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="kd">const</span> <span class="nx">ChatInterface</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="p">[</span><span class="nx">messages</span><span class="p">,</span> <span class="nx">setMessages</span><span class="p">]</span> <span class="o">=</span> <span class="nx">useState</span><span class="p">([]);</span>
+  <span class="kd">const</span> <span class="p">[</span><span class="nx">input</span><span class="p">,</span> <span class="nx">setInput</span><span class="p">]</span> <span class="o">=</span> <span class="nx">useState</span><span class="p">(</span><span class="dl">''</span><span class="p">);</span>
+
+  <span class="kd">const</span> <span class="nx">sendMessage</span> <span class="o">=</span> <span class="k">async</span> <span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// Add the message to the chat box</span>
+    <span class="nx">setMessages</span><span class="p">([...</span><span class="nx">messages</span><span class="p">,</span> <span class="p">{</span> <span class="na">text</span><span class="p">:</span> <span class="nx">message</span><span class="p">,</span> <span class="na">sender</span><span class="p">:</span> <span class="dl">'</span><span class="s1">user</span><span class="dl">'</span> <span class="p">}]);</span>
+
+    <span class="c1">// Call your async function to get a response from the server</span>
+    <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">yourAsyncFunction</span><span class="p">(</span><span class="nx">message</span><span class="p">);</span>
+
+    <span class="c1">// Add the response to the chat box</span>
+    <span class="nx">setMessages</span><span class="p">([...</span><span class="nx">messages</span><span class="p">,</span> <span class="p">{</span> <span class="na">text</span><span class="p">:</span> <span class="nx">response</span><span class="p">,</span> <span class="na">sender</span><span class="p">:</span> <span class="dl">'</span><span class="s1">server</span><span class="dl">'</span> <span class="p">}]);</span>
+  <span class="p">};</span>
+
+  <span class="kd">const</span> <span class="nx">handleSend</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">input</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">!==</span> <span class="dl">''</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">sendMessage</span><span class="p">(</span><span class="nx">input</span><span class="p">);</span>
+      <span class="nx">setInput</span><span class="p">(</span><span class="dl">''</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">};</span>
+
+  <span class="kd">const</span> <span class="nx">handleKeyPress</span> <span class="o">=</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">key</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">Enter</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">handleSend</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">};</span>
+
+  <span class="k">return</span> <span class="p">(</span>
+    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="si">{</span><span class="nx">messages</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">message</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">(</span>
+          <span class="p">&lt;</span><span class="nt">div</span> <span class="na">key</span><span class="p">=</span><span class="si">{</span><span class="nx">index</span><span class="si">}</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">strong</span><span class="p">&gt;</span><span class="si">{</span><span class="nx">message</span><span class="p">.</span><span class="nx">sender</span><span class="si">}</span>:<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span> <span class="si">{</span><span class="nx">message</span><span class="p">.</span><span class="nx">text</span><span class="si">}</span>
+          <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">))</span><span class="si">}</span>
+      <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">input</span>
+        <span class="na">type</span><span class="p">=</span><span class="s">"text"</span>
+        <span class="na">value</span><span class="p">=</span><span class="si">{</span><span class="nx">input</span><span class="si">}</span>
+        <span class="na">onChange</span><span class="p">=</span><span class="si">{</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">setInput</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span><span class="si">}</span>
+        <span class="na">onKeyPress</span><span class="p">=</span><span class="si">{</span><span class="nx">handleKeyPress</span><span class="si">}</span>
+      <span class="p">/&gt;</span>
+      <span class="p">&lt;</span><span class="nt">button</span> <span class="na">onClick</span><span class="p">=</span><span class="si">{</span><span class="nx">handleSend</span><span class="si">}</span><span class="p">&gt;</span>Send<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">);</span>
+<span class="p">};</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">ChatInterface</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Had to fix the return value of that sendMessage function to stop tsc complaining</p>
+
+<p>I then prompted</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>update this to be a POST with { message }
+
+async function sendMessage(message) {
+  const response = await fetch(`${vanjaCloudUrl}/api/main/blog`);
+  const json = await response.json()
+  console.log(json)
+  return json;
+}
+</code></pre></div></div>
+
+<p>ChatGPT was slow / crashy… gonna retry this one…</p>
+
+<p>Response:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>async function sendMessage(message) {
+  const response = await fetch(`${vanjaCloudUrl}/api/main/blog`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ message })
+  });
+  
+  const json = await response.json();
+  console.log(json);
+  return json;
+}
+
+</code></pre></div></div>
+
+<p>Seems decent, lets plop it in…</p>
+
+<p>Testing:</p>
+
+<ol>
+  <li>SendMessage works great, we get a good response</li>
+  <li>Our ChatInterface component is balls, fails with stack overflow on setMessages.</li>
+</ol>
+
+<p>I will now investigate manually… after a short bio-break</p>
+
+<p>Thought 5: I should timestamp some of my messages</p>
+
+<p>22:58 brb</p>
+
+<p>23:06 got banana</p>
+
+<p>Ok where were we: fixing this web chat</p>
+
+<p>Ok its not so bad, we accidentally have 2 methods of the same name probably not ChatGPTs fault</p>
+
+<p><img src="assets/llm-blog-concept/image-20230627231147136.png" alt="image-20230627231147136" /></p>
+
+<p>This is actually a bug, because setMessages is called twice but messages does not update…</p>
+
+<p>I fixed in a clumsy way that still allows race conditions, will do a proper fix later.</p>
+
+<p>23:13 Now I’m thinking that maybe I should quickly add another command to get the blog entry… so i’ll have blog, which returns a blog text summary &amp; id, and chat, which allows some sort of chat…</p>
+
+<p>Wait, does chat need to send context as well? Yeah I don’t think I can use lambda in any reasonable way (plus openai sends the context, may as well follow their pattern #goodprinciple: propagate patterns of your platform)</p>
+
+<p>Thought: I am <em>heavily</em> emphasizing YAGNI, and only building what is needed in a scrappy way… but is that actually faster? Like long term, maybe I’m better off doing known best practices and building things mildly ‘right’. Not sure which is more fun.. yagni I think has been more fun but I expect I’ll get back to jumping some steps soon</p>
+
+<p>Anyway, just deployed a blog and chat api, while its building I’m wondering if there are ways to move faster. ACCELERATE</p>
+
+<p>I don’t want to build my own blog software, that would suck, so I would want to hammer this into some existing blog software. Probably start with a github blog or something simple?</p>
+
+<p>Ok deployed. With some small fix up the first api works (blog), but chat API is not returning any json content. Investigating in azure portal logs.</p>
+
+<p>I don’t like azure log view. This whole ‘fake console’ ux is ugly, and it says things like ‘connected’ then shows no output… Not reliable at all. Why are logs always unreliable?</p>
+
+<p>Looks like the server is sending a reasonable response and Safari client is being weird. Checking network tab. Hmm, Safari insists the payload is empty. Visually comparing the two APIs to see what might be different… Maybe I should ask Chatgpt?</p>
+
+<p>I reloaded the webpage to get both APIs to rexecute, then compared service logs. Looks like 2nd API is returning a promise which is breaking things. Will fix code now…</p>
+
+<p>Async plumbed correctly in service. Wish typescript caught this error, but I guess I haven’t got many types in place.</p>
+
+<p>23:43 Commit &amp; Push to deploy. I’m very grateful for auto-deploy pipelines. I look forward to the day I regret them, but for now its such a welcome change from the pain that is deployments at dayjob. I take my break reading the latest Stratechery about Starlink. Looks neat, pricey, but I have no need for it.</p>
+
+<p>Sweet, remote works. Regrouping for final steps:</p>
+
+<ol>
+  <li>Push web component</li>
+  <li>Validate web component</li>
+  <li>Update service component with first blog post as proof of concept</li>
+  <li>Validate website</li>
+  <li>Share website with small group for feedback</li>
+</ol>
+
+<p>Lets go!</p>
+
+<p>Thought: I might take a small detour to figure out where to host these files. On second thoughts: nah, just gonna mash it in the service raw and see what happens</p>
+
+<p>Pregunta: How will the images be handled? meh. will figure it out later</p>
+
+<p>ALTHOUGH: it would be pretty sweet if my chat gpt thing also sometimes gave you images. that would be cool.</p>
+
+<p>Just spent a moment visualizing how it might look for the user to use this, and how quick I could get this on to HackerNews, and how I would then convert those potential connections into something (direct to my twitter accounts)</p>
+
+<p>What am I doing again? Oh thats right, I have a plan above 11:56pm</p>
+
+<p>Sweet, step 1 worked flawlessly (I was expecting a build issue) and step 2 passed as well (sweet). Now to hardcode my blog into the service (this part is a bit meta, since I will need to put this incomplete text in…)</p>
+
+<p>I love ChatGPT, again. Prompt:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>I have a default azure typescript function project, i want to have a content folder with some markdown and images. I think i need to update something to make sure this content folder gets copied into dist/ for deploy. how?
+</code></pre></div></div>
+
+<p>The response was a bit mid, but I don’t think its ChatGPTs fault, I think typescript build sucks. Please, can someone just admit that we need a proper compiler &amp; build system OUTSIDE of the node project? sigh.</p>
+
+<p>Anyway, having some issues just copying a folder recursively into dest. Not sure why its trying to get me to use the npm package ‘copyfiles’. I think this is just <code class="language-plaintext highlighter-rouge">cp -r</code>? Yes it is. I ask why it gave me such effort:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>I apologize for the confusion. The cp -r command is indeed a straightforward and simple way to copy files and directories in Unix-like systems. However, in the context of Node.js projects, it's common to use Node.js-based tools for tasks like this, as they are cross-platform and integrate well with the Node.js ecosystem.
+</code></pre></div></div>
+
+<p>First push is happening. Obviously storing these text files and images in here is a bit meh. Probably I’ll keep the text in here but the images I’ll pull out somewhere. Lets just get the ball rolling first to see the UX. Validating website, then adding chatgpt support. Sigh, I rememberd I need to fix that openai crap. Any my battery is running low.</p>
+
+<p>00:23</p>
+
+<p>Thought: could use chatgpt with this log to estimate how long something would take me to do… it would have past data of how long things take me…</p>
+
+<p>Thought: with an LLM, it is now more-useful to do this ‘stream of consciousness’ style work system. Write infinite content while you work, then let the system figure out what to do with it. Over time, more filters and stuff can be added on to it… This would be v. interesting for big companies, but also for personal stuff. Would be even cooler if video was running 24/7 and you (I) were (was) constantly narrating what I’m doing to the camera. Soon!</p>
+
+<p>Thought: Will be kinda funny when people start chatting wtih this thing and asking it deep psychological questions like “would you say the author is happy?” lmao</p>
+
+<p>Success.</p>
+
+<p>I would really like it if the chatbot could reply with images. I feel like that would be a warm ‘surprise’ for people. Like a cute easteregg, something that they’re not yet accustomed to.</p>
+
+<p>Ok next step is to get openai working. Sigh. Should I sleep and leave it for tomorrow, or hack away?</p>
+
+<p>00:27 getting my charger</p>
+
+<p>00:45 Running on fumes. Lets see if I can get openai to work before I fade</p>
+
+<p>Had some nice thoughts about how this would look and how I would advertise it on various communities, how it would grow and how I could finetune an OpenAI model to reply more like me.</p>
+
+<p>So turns out <code class="language-plaintext highlighter-rouge">yarn add openai</code> works just fine. No idea why it didn’t work before? Although I did find some weird left over .js files that I deleted. I’m very close to having something up and running…</p>
+
+<p>Ok I think I’ve wired up chatgpt with no context only messaging. Last bit remaining is wiring up the API key… where is that even saved?</p>
+
+<p>00:57 pushing… will be strange if this works first try. I’m gonna load up the logs to be ready</p>
+
+<p>github action failed, new key I just added is missing… Fixing</p>
+
+<p>Man, github is so cool. Working with modern non-garbage tools is so cool. Dayjobs are the baddest (derogatory)</p>
+
+<p>Taking a short twitter break while github builds… still fails? I think I need to rerun all jobs not just failing job. Trying again.</p>
+
+<p>Ok I think I found the issue, adding a repo secret to github does not automatically reference that secret in a build script. You have to explicitly pull it into env. I don’t like this tbh, seems like a lot of unneccesary work. Ah man it failed again wtf. Ok I didn’t merge ChatGPT’s response right. Env variables are pulled into a run step of a build script, not into a build script as a whole</p>
+
+<p>Wow wtf. can’t believe this worked first try. (Ok technically it failed at deployment like 10 times so its not really first try, but it kinda did work first try. Abstractions that work are great. Once I get my env set up things will be SO GOOD!!)</p>
+
+<p><img src="assets/llm-blog-concept/image-20230628012301408.png" alt="image-20230628012301408" /></p>
+
+<p>28/6/2023 22:43 Starting again</p>
+
+<p>What needs doing? I think I want to fix the context first, then focus on polishing up the view + introduction. I’m thinking “what do i need to do, minimum, to show someone”:</p>
+
+<ol>
+  <li>Fix chatgpt context</li>
+  <li>Add introductory text</li>
+  <li>Polish up the view, theme?</li>
+  <li>Might need to also add more bloggy content to flesh it out, about me etc</li>
+</ol>
+
+<p>Getting distracted by youtube videos about quarter tone scales (arabic, persian, albanian)</p>
+
+<p>23:48 got in a rabbit hole, trying to get a nice local testing environment set up. I’m trying to use wallaby.js, i really enjoy dev with that because its such a fast paced response. But mashing it into webstorm is ugly. It works much nicer in vscode. Tried to get it working in webstorm but it kept using old code. Had issues with WebStorm also suggesting imports deep into OpenAI that broke compiles. Almost got this working, I think this is important to invest time into and get it working nicely. Fast response to changes is very important…</p>
+
+<p>00:01 still polishing up this test, getting a nice end to end where i call the function with my message &amp; context, and it hits open ai + responds. I was missing context support so I’m adding that in, but having some issues exposing the internal message type on context. I’m half way between ‘hack it in’ and ‘get the types right’. i’m finding i need some typing because i have params query and body and its kinda a pain to manage all 3 at once. REST is dumb, hate rest. I just need 1 place to input to my function why is it in 3 places making my life hard. Previously, I had it just accepting a body value on post… but at some point I started using all 3? I have no idea I wasn’t paying attention. Should fix this…</p>
+
+<p>00:40 kinda watching some music videos, kinda trying to focus on this. reading the fine tuning api notes to see if it can help. found this command: <code class="language-plaintext highlighter-rouge">openai api chat_completions.create -m gpt-3.5-turbo -g user hey</code> cool.</p>
+
+<p>01:20 Took a detour to learn how to make finetunings. Just completed context + got it working in my test environment. Nice.</p>
+
+<p>1:52 probably time to call it. my web &lt;-&gt; js interface is murky because i’m hacking at this instead of setting up types properly. Is this even faster than just doing things right?? idk, at least its kinda fun til I get stuck. Anyway, Parcel has decided to stop refreshing my website? wtf?</p>
+
+<p>Ok mashing got parcel to update. Now my LLM is not acknowledging the existence of my backing content? for tomorrow:</p>
+
+<ol>
+  <li>Why is content not acknowledged anymore?</li>
+  <li>Add intro post</li>
+  <li>Style</li>
+</ol>
+
+<p>Jun29 21:44</p>
+
+<p>Tired. Working in slow motion. Found I lost the system prompt, readding that back in…</p>
+
+<p>Fixed the system prompt. Added an intro post. Tried to keep it tight but also I’m pretty tired. I’m imaginging how this will launch and I’m being positive, but getting the quality up will be annoying.</p>
+
+<p>Probably need to add a streaming api..</p>
+
+<p>22:15 uploading latest files…</p>
+
+<p>Uploaded. It has started replying in first person. cool…</p>
+
+  </div>
+
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy;  - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="http://localhost:4000/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
